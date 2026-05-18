@@ -1,4 +1,4 @@
 streamlit
 groq
 python-docx
-fpdf2
+reportlab
