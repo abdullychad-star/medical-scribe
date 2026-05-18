@@ -211,14 +211,29 @@ Always consult a licensed physician.
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 
         with col2:
-          pdf = FPDF()
-pdf.add_page()
-pdf.set_margins(15, 15, 15)
-pdf.set_font("Helvetica", size=10)
+         from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
+import io
+
+pdf_buffer = io.BytesIO()
+doc = SimpleDocTemplate(pdf_buffer, pagesize=letter,
+    rightMargin=inch, leftMargin=inch,
+    topMargin=inch, bottomMargin=inch)
+styles = getSampleStyleSheet()
+story = []
 for line in full_report.split("\n"):
-    clean_line = line.encode('latin-1', 'replace').decode('latin-1')
-    pdf.multi_cell(0, 5, clean_line)
-pdf_bytes = pdf.output()
+    if line.strip() == "":
+        story.append(Spacer(1, 6))
+    else:
+        clean = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        story.append(Paragraph(clean, styles["Normal"]))
+doc.build(story)
+pdf_buffer.seek(0)
+st.download_button("📑 Download PDF", pdf_buffer, 
+    file_name="medical_scribe_report.pdf",
+    mime="application/pdf")
             st.download_button("📑 Download PDF", pdf_bytes, file_name="medical_scribe_report.pdf",
                 mime="application/pdf")
 
