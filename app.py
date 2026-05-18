@@ -2,9 +2,12 @@ import streamlit as st
 from groq import Groq
 import os
 import tempfile
-from docx import Document
-from fpdf import FPDF
 import io
+from docx import Document
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
 
 st.set_page_config(page_title="Medical Scribe", page_icon="🩺", layout="wide")
 
@@ -170,8 +173,6 @@ SOAP Note:
         st.subheader("🏷 Billing Codes")
         st.text_area("", codes, height=300, label_visibility="collapsed")
 
-        st.subheader("⬇ Download Report")
-
         full_report = f"""AUTONOMOUS MEDICAL SCRIBE v1.0
 {'='*50}
 
@@ -192,6 +193,8 @@ DISCLAIMER: For demonstration purposes only.
 Not validated for clinical use.
 Always consult a licensed physician.
 """
+
+        st.subheader("⬇ Download Report")
         col1, col2 = st.columns(2)
 
         with col1:
@@ -207,16 +210,13 @@ Always consult a licensed physician.
             buf = io.BytesIO()
             doc.save(buf)
             buf.seek(0)
-            st.download_button("📄 Download Word Doc", buf, file_name="medical_scribe_report.docx",
+            st.download_button("📄 Download Word Doc", buf,
+                file_name="medical_scribe_report.docx",
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 
-      with col2:
-            from reportlab.lib.pagesizes import letter
-            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-            from reportlab.lib.styles import getSampleStyleSheet
-            from reportlab.lib.units import inch
+        with col2:
             pdf_buffer = io.BytesIO()
-            doc = SimpleDocTemplate(pdf_buffer, pagesize=letter,
+            pdf_doc = SimpleDocTemplate(pdf_buffer, pagesize=letter,
                 rightMargin=inch, leftMargin=inch,
                 topMargin=inch, bottomMargin=inch)
             styles = getSampleStyleSheet()
@@ -227,7 +227,7 @@ Always consult a licensed physician.
                 else:
                     clean = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
                     story.append(Paragraph(clean, styles["Normal"]))
-            doc.build(story)
+            pdf_doc.build(story)
             pdf_buffer.seek(0)
             st.download_button("📑 Download PDF", pdf_buffer,
                 file_name="medical_scribe_report.pdf",
