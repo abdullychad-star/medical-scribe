@@ -210,31 +210,27 @@ Always consult a licensed physician.
             st.download_button("📄 Download Word Doc", buf, file_name="medical_scribe_report.docx",
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 
-        with col2:
-         from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.units import inch
-import io
-
-pdf_buffer = io.BytesIO()
-doc = SimpleDocTemplate(pdf_buffer, pagesize=letter,
-    rightMargin=inch, leftMargin=inch,
-    topMargin=inch, bottomMargin=inch)
-styles = getSampleStyleSheet()
-story = []
-for line in full_report.split("\n"):
-    if line.strip() == "":
-        story.append(Spacer(1, 6))
-    else:
-        clean = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        story.append(Paragraph(clean, styles["Normal"]))
-doc.build(story)
-pdf_buffer.seek(0)
-st.download_button("📑 Download PDF", pdf_buffer, 
-    file_name="medical_scribe_report.pdf",
-    mime="application/pdf")
-            st.download_button("📑 Download PDF", pdf_bytes, file_name="medical_scribe_report.pdf",
+      with col2:
+            from reportlab.lib.pagesizes import letter
+            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+            from reportlab.lib.styles import getSampleStyleSheet
+            from reportlab.lib.units import inch
+            pdf_buffer = io.BytesIO()
+            doc = SimpleDocTemplate(pdf_buffer, pagesize=letter,
+                rightMargin=inch, leftMargin=inch,
+                topMargin=inch, bottomMargin=inch)
+            styles = getSampleStyleSheet()
+            story = []
+            for line in full_report.split("\n"):
+                if line.strip() == "":
+                    story.append(Spacer(1, 6))
+                else:
+                    clean = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                    story.append(Paragraph(clean, styles["Normal"]))
+            doc.build(story)
+            pdf_buffer.seek(0)
+            st.download_button("📑 Download PDF", pdf_buffer,
+                file_name="medical_scribe_report.pdf",
                 mime="application/pdf")
 
 st.markdown("---")
