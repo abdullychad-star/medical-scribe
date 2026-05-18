@@ -211,12 +211,14 @@ Always consult a licensed physician.
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 
         with col2:
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Helvetica", size=11)
-            for line in full_report.split("\n"):
-                pdf.multi_cell(0, 6, line)
-            pdf_bytes = pdf.output()
+          pdf = FPDF()
+pdf.add_page()
+pdf.set_margins(15, 15, 15)
+pdf.set_font("Helvetica", size=10)
+for line in full_report.split("\n"):
+    clean_line = line.encode('latin-1', 'replace').decode('latin-1')
+    pdf.multi_cell(0, 5, clean_line)
+pdf_bytes = pdf.output()
             st.download_button("📑 Download PDF", pdf_bytes, file_name="medical_scribe_report.pdf",
                 mime="application/pdf")
 
