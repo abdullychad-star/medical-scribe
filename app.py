@@ -38,7 +38,7 @@ if audio_file:
                     file=f,
                     model="whisper-large-v3",
                     response_format="verbose_json",
-                    language="en"
+                    language=None
                 )
 
             transcript = transcription.text
@@ -54,6 +54,7 @@ if audio_file:
 
 Rules:
 - Use proper medical terminology
+- Detect the language spoken in the transcript and write the ENTIRE SOAP note in that same language, including all headings and labels
 - In Subjective, follow OLDCARTS format (Onset, Location, Duration, Character, Alleviating/Aggravating factors, Radiation, Timing, Severity)
 - In Assessment, rank diagnoses from MOST to LEAST likely with brief reasoning for each
 - In Assessment, only reference symptoms explicitly stated in the transcript. Double-check each sentence before including it.
@@ -135,6 +136,7 @@ Transcript:
 
 Rules:
 - Always code the DIAGNOSIS, not the symptom, when a diagnosis has been established
+- Write all Name and Reason fields in the same language as the SOAP note, but keep the actual codes (I30.9, 93000 etc.) in their standard format
 - If no confirmed diagnosis, code the most specific symptom codes available
 - Never use unspecified codes when a more specific code exists
 - Do not use duplicate or overlapping codes
